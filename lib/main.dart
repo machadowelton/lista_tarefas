@@ -34,10 +34,71 @@ class _HomeState extends State<Home> {
     }
   }
 
+  final _toDoController = TextEditingController();
   List _toDoList = [];
+  void _addToDo() {
+    setState(() {
+      Map<String, dynamic> newToDo = Map();
+      newToDo["title"] = _toDoController.text;
+      _toDoController.clear();
+      newToDo["ok"] = false;
+      _toDoList.add(newToDo);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("Lista de Tarefas"),
+          backgroundColor: Colors.blueAccent,
+          centerTitle: true,
+        ),
+        body: Column(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(17.0, 1.0, 7.0, 1.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: _toDoController,
+                      decoration: InputDecoration(
+                          labelText: "Nova Tarefa",
+                          labelStyle: TextStyle(color: Colors.blueAccent)),
+                    ),
+                  ),
+                  RaisedButton(
+                    color: Colors.blueAccent,
+                    child: Text("Add"),
+                    textColor: Colors.white,
+                    onPressed: _addToDo,
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 10.0),
+                itemCount: _toDoList.length,
+                itemBuilder: (context, index) {
+                  return CheckboxListTile(
+                    title: Text(_toDoList[index]["title"]),
+                    value: _toDoList[index]["ok"],
+                    secondary: CircleAvatar(
+                      child: Icon(
+                          _toDoList[index]["ok"] ? Icons.check : Icons.warning),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _toDoList[index]["ok"] = value;
+                      });
+                    },
+                  );
+                },
+              ),
+            )
+          ],
+        ));
   }
 }
